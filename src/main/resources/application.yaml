@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: rejestracja
+
+email:
+  dns:
+    server: "dns://8.8.8.8"
