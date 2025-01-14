@@ -61,3 +61,27 @@ Typy Generyczne:
 - Interfejsy funkcyjne UnaryOperator, Function, Consumer są operatorami generycznymi,
 - Nie jest to najszczęśliwszy wybór do demonstrowania typów generycznych, ponieważ każda z właściwości obiektu User jest typu String. 
 
+## Użycie
+
+- Przykładowy Request:
+
+    {
+      "requestedUsers" : [
+        {
+          "username" : "costam",
+          "email" : "koza@gmail.com",
+          "password" : "aaaaDD445$kjhAdfg1"
+        }
+      ]
+    }
+
+- Wymagania nazwy użytkownika:
+  - Długość od 3 do 10 znaków,
+  - Dowolone duże i małe litery, cyfry oraz znak kropki.
+- Wymagania adresu email:
+  - Format zgodny z RFC 2822,
+  - Domena adresu musi istnieć i mieć zarejestrowany MX server.
+- Wymagania hasła
+  - długość od 8 do 32 znaków,
+  - Wymagane klasy znaków to małe i duże litery, cyfry, znaki specjalne (@#$%^&+=.!).
+  - Hasło nie jest notowane w bazach serwisu HaveIBeenPwned. 
