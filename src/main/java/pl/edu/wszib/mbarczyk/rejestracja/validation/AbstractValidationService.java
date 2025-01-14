@@ -1,5 +1,6 @@
 package pl.edu.wszib.mbarczyk.rejestracja.validation;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import pl.edu.wszib.mbarczyk.rejestracja.model.User;
 
@@ -23,10 +24,16 @@ public abstract class AbstractValidationService implements UnaryOperator<User> {
     public User apply(User user) {
         validateUser(user);
         if (null != delegate) {
-            delegate.validateUser(user);
+            log.info("Call delegate: {}", delegate);
+            delegate.apply(user);
         }
         return user;
     }
 
     protected abstract void validateUser(User user);
+
+    @PostConstruct
+    public void postConstruct(){
+        log.info("Created with delegate: {}", delegate);
+    }
 }

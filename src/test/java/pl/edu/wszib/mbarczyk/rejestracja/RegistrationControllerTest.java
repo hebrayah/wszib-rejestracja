@@ -25,6 +25,7 @@ class RegistrationControllerTest {
 
     @Autowired
     RegistrationController registrationController;
+
     WebTestClient webTestClient;
 
     @BeforeEach
@@ -47,8 +48,6 @@ class RegistrationControllerTest {
                 .expectStatus()
                 .isOk();
         //then
-
-
     }
 
     @Test
@@ -66,7 +65,6 @@ class RegistrationControllerTest {
 
 
     }
-
 
     @Test
     void shouldReturnBadRequestOnEmptyRequest() {

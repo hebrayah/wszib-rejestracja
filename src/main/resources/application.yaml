@@ -5,3 +5,8 @@ spring:
 email:
   dns:
     server: "dns://8.8.8.8"
+
+password:
+  validation:
+    service:
+      url: https://api.pwnedpasswords.com
