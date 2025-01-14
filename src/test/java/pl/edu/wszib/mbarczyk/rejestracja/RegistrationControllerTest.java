@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import pl.edu.wszib.mbarczyk.rejestracja.model.RegistrationRequest;
 import pl.edu.wszib.mbarczyk.rejestracja.model.User;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -62,8 +61,7 @@ class RegistrationControllerTest {
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody()
-                .consumeWith(aaa->log.info("{}", new String( aaa.getResponseBody())))
-                .jsonPath("$.error.messaage").isNotEmpty();
+                .json("{\"registeredUsers\":null,\"error\":{\"username\":\"nazwa\",\"code\":\"400\",\"message\":\"Dane Uzytkownika: nazwa zawierają błędy. Hasło nie spełnia wymagań bezpieczeństwa: Hasło nie spełnia wymagań złożoności\"}}");
         //then
     }
 
@@ -110,7 +108,7 @@ class RegistrationControllerTest {
                 .body(BodyInserters.fromValue(request))
                 .exchange()
                 .expectStatus()
-                .isOk();
+                .isBadRequest();
         //then
 
 
