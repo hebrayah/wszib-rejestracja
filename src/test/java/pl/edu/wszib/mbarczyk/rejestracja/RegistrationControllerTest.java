@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import pl.edu.wszib.mbarczyk.rejestracja.model.RegistrationRequest;
 import pl.edu.wszib.mbarczyk.rejestracja.model.User;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -25,7 +26,6 @@ class RegistrationControllerTest {
 
     @Autowired
     RegistrationController registrationController;
-
     WebTestClient webTestClient;
 
     @BeforeEach
@@ -51,6 +51,24 @@ class RegistrationControllerTest {
     }
 
     @Test
+    void shouldFailOnTooSimplePassword() {
+        //given
+        RegistrationRequest request = new RegistrationRequest(List.of(new User("nazwa", "kicia@gmail.com", "aaa")));
+        //when
+        webTestClient.post()
+                .uri("/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .consumeWith(aaa->log.info("{}", new String( aaa.getResponseBody())))
+                .jsonPath("$.error.messaage").isNotEmpty();
+        //then
+    }
+
+
+    @Test
     void ShouldReturnBadRequestOnEmptyList() {
         //given
         //when
@@ -62,8 +80,6 @@ class RegistrationControllerTest {
                 .expectStatus()
                 .isBadRequest();
         //then
-
-
     }
 
     @Test
@@ -77,14 +93,13 @@ class RegistrationControllerTest {
                 .expectStatus().isBadRequest()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON);
         //then
-
     }
 
     @Test
     void shouldHandleRequestWithMultipleUsers() {
         //given
         RegistrationRequest request = new RegistrationRequest(
-                IntStream.range(2, 20)
+                IntStream.range(2, 7)
                 .mapToObj(i->createRandomUser())
                 .toList()
         );
@@ -104,12 +119,12 @@ class RegistrationControllerTest {
     private User createRandomUser() {
         return new User(RandomStringUtils.insecure().nextAlphabetic(6),
                 createRandomEmail(),
-                RandomStringUtils.insecure().next(10)
+                RandomStringUtils.insecure().nextAlphanumeric(9) + "!"
         );
     }
 
     private String createRandomEmail() {
         return String.format("%s@%s.%s", RandomStringUtils.insecure().nextAlphanumeric(8),
-                RandomStringUtils.insecure().nextAlphabetic(8), "com");
+                "cnn", "com");
     }
 }

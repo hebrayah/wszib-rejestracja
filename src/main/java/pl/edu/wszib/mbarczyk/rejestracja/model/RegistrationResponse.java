@@ -6,5 +6,13 @@ import java.util.Map;
 
 @Data
 public class RegistrationResponse {
-    private final Map<String, User> registeredUsers;
+    private Map<String, User> registeredUsers;
+    private ApiError error;
+
+    public RegistrationResponse(Map<String, User> registeredUsers) {
+        this.registeredUsers = registeredUsers;
+    }
+
+    public RegistrationResponse() {
+    }
 }

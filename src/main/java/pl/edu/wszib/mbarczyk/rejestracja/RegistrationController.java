@@ -3,18 +3,18 @@ package pl.edu.wszib.mbarczyk.rejestracja;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import pl.edu.wszib.mbarczyk.rejestracja.model.ApiError;
 import pl.edu.wszib.mbarczyk.rejestracja.model.RegistrationRequest;
 import pl.edu.wszib.mbarczyk.rejestracja.model.RegistrationResponse;
 import pl.edu.wszib.mbarczyk.rejestracja.model.User;
 import pl.edu.wszib.mbarczyk.rejestracja.validation.ValidationException;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,24 +33,37 @@ public class RegistrationController {
     private final UnaryOperator<User> userValidationService;
 
     @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public Mono<RegistrationResponse> registerUsers(@RequestBody RegistrationRequest request) {
+    public RegistrationResponse registerUsers(@RequestBody RegistrationRequest request) {
         log.info("Request: {}", request);
-        return Mono.fromSupplier(() -> processRequest(request.getRequestedUsers()));
+        return processRequest(request.getRequestedUsers());
     }
 
     private RegistrationResponse processRequest(List<User> requestedUsers) {
-        try {
-            return new RegistrationResponse(Optional.ofNullable(requestedUsers)
-                    .orElseThrow()
-                    .stream()
-                    .parallel()
-                    .map(userValidationService)
-                    .collect(Collectors.toMap(user -> registerUser(user), Function.identity()))
-            );
-        } catch (NoSuchElementException nosee) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lista użytkowników jest pusta", nosee  );
-        }
+        return new RegistrationResponse(Optional.ofNullable(requestedUsers)
+                .orElseThrow()
+                .stream()
+                .parallel()
+                .map(userValidationService)
+                .collect(Collectors.toMap(user -> registerUser(user), Function.identity()))
+        );
     }
+
+    @ExceptionHandler({ValidationException.class})
+    public ResponseEntity<RegistrationResponse> validationErrorHandler(ValidationException ex) {
+        ApiError apiError = new ApiError(ex.getUser().username(), "400", ex.getReason());
+        RegistrationResponse response = new RegistrationResponse();
+        response.setError(apiError);
+        return new ResponseEntity<RegistrationResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({NoSuchElementException.class})
+    public ResponseEntity<RegistrationResponse> noSuchErrorHandler(NoSuchElementException ex) {
+        ApiError apiError = new ApiError("", "400", "Nie podano żadnego użytkownika!");
+        RegistrationResponse response = new RegistrationResponse();
+        response.setError(apiError);
+        return new ResponseEntity<RegistrationResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     private String registerUser(User user) {
         log.info("Requested user to register: {}", user);
