@@ -49,7 +49,7 @@ co może być kosztowne, więc wywołujemy ją, dopiero kiedy trywialne reguły 
     - "Lekka" (Proxy Object) część walidacji, zarówno hasła jak i adresu email została zrealizowana przy użyciu wyrażenia regularnego.    
     - "Ciężka" (Target Object) część w przypadku adresu email, to weryfikacja DNS, w przypadku hasła to użycie usługi sieciowej. 
     - Interfejs (Subject) to Consumer<String>.
-- *Łańcuch odpowiedzialności* - Każde pole obiektu `User` jest weryfikowane poprzez osobne ogniwo łańcucha odpowiedzialności. 
+- *Łańcuch odpowiedzialności* - Każde pole obiektu `pl.edu.wszib.mbarczyk.rejestracja.model.User` jest weryfikowane poprzez osobne ogniwo łańcucha odpowiedzialności. 
     - Każde z ogniw łańcucha deleguje walidację to stosownego obiektu Proxy.
 
 Obsługa wyjątków:
@@ -59,7 +59,7 @@ Obsługa wyjątków:
 
 Typy Generyczne:
 - Interfejsy funkcyjne UnaryOperator, Function, Consumer są operatorami generycznymi,
-- Nie jest to najszczęśliwszy wybór do demonstrowania typów generycznych, ponieważ każda z właściwości obiektu User jest typu String. 
+- Nie jest to najszczęśliwszy wybór do demonstrowania typów generycznych, ponieważ każda z właściwości obiektu pl.edu.wszib.mbarczyk.rejestracja.model.User jest typu String. 
 
 ## Użycie
 

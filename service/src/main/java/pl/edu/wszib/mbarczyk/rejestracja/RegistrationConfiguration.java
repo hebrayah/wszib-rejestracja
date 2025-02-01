@@ -50,7 +50,7 @@ public class RegistrationConfiguration {
     }
 
     @Bean
-    public Consumer<String> passwordFormatValidatingProxy(Consumer<String> compromisedPasswordValidationConsumer) {
+    public Consumer<String> passwordFormatValidatingProxy(@Qualifier("compromisedPasswordValidationConsumer") Consumer<String> compromisedPasswordValidationConsumer) {
         return new PasswordFormatValidatingProxy(compromisedPasswordValidationConsumer);
     }
 

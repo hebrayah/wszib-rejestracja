@@ -12,7 +12,6 @@ public class RegistrationResponse {
     public RegistrationResponse(Map<String, User> registeredUsers) {
         this.registeredUsers = registeredUsers;
     }
-
     public RegistrationResponse() {
     }
 }

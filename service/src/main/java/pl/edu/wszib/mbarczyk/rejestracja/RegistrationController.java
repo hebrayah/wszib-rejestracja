@@ -1,7 +1,7 @@
 package pl.edu.wszib.mbarczyk.rejestracja;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +25,20 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class RegistrationController {
 
     private final UnaryOperator<User> userValidationService;
 
+    public RegistrationController(@Qualifier("userValidationService") UnaryOperator<User> userValidationService) {
+        this.userValidationService = userValidationService;
+    }
+
     @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public RegistrationResponse registerUsers(@RequestBody RegistrationRequest request) {
         log.info("Request: {}", request);
-        return processRequest(request.getRequestedUsers());
+        return processRequest(request.requestedUsers());
     }
 
     private RegistrationResponse processRequest(List<User> requestedUsers) {
